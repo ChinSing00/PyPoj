@@ -34,6 +34,8 @@ def getDownload(url):
             content = response.read().decode('gbk')
         except :
             content = response.read().decode('utf-8') 
+        if content == '':
+        	return None
         bs = BaseSpi.basespi()
         items = bs._regx(_81_rule,content)
         title = bs._regx(_81_til_rule,content) 
@@ -44,7 +46,7 @@ def getDownload(url):
             temp.extend(items)
             if len(temp) != 0:
                 print(str(title[0]))
-                f.write('\t\t\t\t----'+title[0]+'----\n')
+                f.write('\t\t\t\t----'+title[0].strip().lstrip('&nbsp;')+'----\n')
                 for i in temp:
                     print(i)
                     f.write(i.strip().lstrip('&nbsp;')+"\n")

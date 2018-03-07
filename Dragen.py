@@ -80,9 +80,10 @@ def produce(con):
     url = 'https://www.txtjia.com/shu/226243/'sjwl
     url ='https://www.zwdu.com/book/11029/'81-xzltq 
     url = 'https://www.zwdu.com/book/28675/'81-dj
-
+    url = 'https://www.zwdu.com/book/23488/'
     '''
-    url ='https://www.zwdu.com/book/11029/'
+    # url ='https://www.zwdu.com/book/11029/'
+    url = 'https://www.zwdu.com/book/23488/'
     _1rule = '<a href=".*?/(\d*.html)">'
     _2rule = '<a href="[\./]*(\d*.html)">'
 

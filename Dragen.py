@@ -65,8 +65,9 @@ def produce(con):
     url = 'http://www.kanunu8.com/book3/7751/' lz
     url = 'https://www.txtjia.com/shu/226243/'sjwl
     url ='https://www.zwdu.com/book/11029/'81-xzltq 
+    url = 'https://www.zwdu.com/book/28675/'81-dj
     '''
-    url = 'https://www.zwdu.com/book/28675/'
+    url ='https://www.zwdu.com/book/11029/'
 
     _1rule = '<a href=".*?/(\d*.html)">'
     _2rule = '<a href="[\./]*(\d*.html)">'

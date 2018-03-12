@@ -1,5 +1,28 @@
 from multiprocessing import Queue 
+import time
 
+def myconn():
+	r = ''
+	while True:
+		n = yield r
+		if not n:
+			return
+		print(n)
+
+def myproduce(mycon):
+    con.send(None)
+    l = 0
+    for i in range(0,10):
+        n = str(i)+'######'
+        con.send(n)
+        time.sleep(2)    
+    con.close()
+
+con = myconn()
+print('start.....')
+myproduce(con)
+
+'''
 q = Queue(10)#初始化一个Queue对象，最多可接收三条put消息
 for i in range(1,11):
 	print(i)
@@ -26,3 +49,4 @@ if not q.empty():
     for i in range(q.qsize()):
         print(q.get())#q.get会阻塞，q.get_nowait()不阻塞，但会抛异常  
 print(q.qsize())
+'''

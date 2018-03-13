@@ -54,10 +54,11 @@ class NovelDown:
 	    n = ''
 	    si = []
 	    bs = BaseSpi.basespi()
-	    #soup = BeautifulSoup(bs.getPage(url),'lxml')
-	    soup = BeautifulSoup(open('lst.html',encoding='utf-8'),'lxml')
+	    soup = BeautifulSoup(bs.getPage(self.url),'lxml')
+	    #soup = BeautifulSoup(open('lst.html',encoding='utf-8'),'lxml')
 	    ls = soup.find('div',class_='book_list')
 	    self.bookname = soup.title.string.strip('- 小说在线阅读 - 村上春树作品集')	
+	    print('开始%s'%self.bookname+'的爬取')
 	    lls = list(filter(lambda x: x.name == 'ul' , ls))
 	    ap = lls[0].find_all('a')
 	    list(filter(lambda x:si.append(x['href']),ap))
@@ -67,14 +68,19 @@ class NovelDown:
 	        con.send(n)
 	        time.sleep(3)    
 	    con.close()
-
+	    print('完成%s'%self.bookname+'的爬取！')
 
 if __name__ == '__main__':
-	url = 'http://cscs.zuopinj.com/5368/'
-	my = NovelDown(url)
-	con = my.consumer()
-	print('start.....')
-	my.produce(con)
+	bs = BaseSpi.basespi()
+	soup = BeautifulSoup(bs.getPage('http://cscs.zuopinj.com/'),'lxml')
+	pps = soup.find_all('h3')
+	li = []
+	list(filter(lambda x: li.append(pps[x].a['href']), range(len(pps))))
+	print(li)
+	for i in li:
+		my = NovelDown(i)
+		con = my.consumer()
+		my.produce(con)
  
 
 ###############################################################################

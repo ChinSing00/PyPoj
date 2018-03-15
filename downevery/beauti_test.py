@@ -1,13 +1,58 @@
-#_4('基于生成器的非阻塞式爬虫')
+
+
+
+
+
+
+
+
+
+
+
+
+
 '''
+#_5('asyncio异步') PS:需要python3.6以上的版本才能正常运行
+import asyncio
+import aiohttp
+
+host = 'www.txtjia.com'
+urls_todo = {
+'/shu/226243/33507923.html','/shu/226243/33507922.html','/shu/226243/33507924.html',
+'/shu/226243/33507925.html','/shu/226243/33507926.html',
+'/shu/226243/33507927.html','/shu/226243/33507928.html','/shu/226243/33507929.html',
+'/shu/226243/33507933.html','/shu/226243/33507943.html','/shu/226243/33507963.html'}
+
+loop = asyncio.get_event_loop()
+
+async def fetch(url):
+	async with 	aiohttp.ClicntSession(loop=loop) as session:
+		async with session.get(url) as response:
+			response = await response.read()
+			print(response)
+			return response
+if __name__ == '__main__':
+	task = [fetch(host+url) for url in urls_todo]
+	loop.run_until_complte(asyncio.gether(*task))
+'''
+
+
+'''
+#_4('基于生成器的非阻塞式爬虫')
 import socket 
 from selectors import DefaultSelector,EVENT_WRITE,EVENT_READ
 
 selector = DefaultSelector()
-stopped = False
-urls_todo = {'/0','/2','/3','/5','/9','/8','/10','/4','/11','/6','/7'}
+stopped = False #作为全局的标志量
+urls_todo = {
+'/shu/226243/33507923.html','/shu/226243/33507922.html','/shu/226243/33507924.html',
+'/shu/226243/33507925.html','/shu/226243/33507926.html',
+'/shu/226243/33507927.html','/shu/226243/33507928.html','/shu/226243/33507929.html',
+'/shu/226243/33507933.html','/shu/226243/33507943.html','/shu/226243/33507963.html'}
+#urls_todo = {'/0','/2','/3','/5','/9','/8','/10','/4','/11','/6','/7'}
 #urls_todo = {'/book/30231/','/book/30141/','/book/30246/','/book/30247/','/book/30248/'}
 
+#Futrue类是用于保存异步调用结果的类
 class Future:
 
 	def __init__(self):
@@ -32,7 +77,7 @@ class Crawler:
 		sock = socket.socket()
 		sock.setblocking(False)
 		try:
-			sock.connect(('example.com',80))
+			sock.connect(('txtjia.com',80))
 		except BlockingIOError :
 			pass
 		f = Future()
@@ -41,23 +86,23 @@ class Crawler:
 			f.set_result(None)
 
 		selector.register(sock.fileno(),EVENT_WRITE,on_conneted)
-		yield f
-		selector.unregister(sock.fileno)
-		get = 'GET {0} HTTP/1.0\r\nexample.com\r\n\r\n'.format(self.url)
-
+	
+		yield f  #将future的状态保存下来，发送
+		selector.unregister(sock.fileno())
+		get = 'GET {0} HTTP/1.0\r\ntxtjia.com/shu/226243\r\n\r\n'.format(self.url)
+		sock.send(get.encode('ascii'))
 		global stopped
 		while True:
 			f = Future()
-
 			def on_readable():
 				f.set_result(sock.recv(4096))
 
-			selector.rigister(sock.fileno(),EVENT_READ,on_readable)
-			chunk = yield f
+			selector.register(sock.fileno(),EVENT_READ,on_readable)
+			chunk = yield f #接收future的状态
 			selector.unregister(sock.fileno())
 			if chunk:
-				self.response += chunkl
-				print(str(self.response))
+				self.response += chunk
+				print(self.response)
 			else:
 				urls_todo.remove(self.url)
 				if not urls_todo:
@@ -82,6 +127,7 @@ class Task:
 def loop():
 	while not stopped:
 		evnets = selector.select()
+
 		for event_key,event_mask in evnets:
 			callback = event_key.data
 			callback()
@@ -177,10 +223,10 @@ def subgen():
 
 g = gen()
 next(g)                # 驱动生成器g开始执行到第一个 yield
-retval = g.send(1)     # 看似向生成器 gen() 发送数据
+retval = g.send(1)     # 向生成器 gen() 发送数据
 print(retval) 
 next(g)            # 返回2
 retva = g.send(12)
 print(retva) 
-#g.throw(StopIteration) # 看似向gen()抛入异常
+#g.throw(StopIteration) # 向gen()抛入异常
 ''' 
